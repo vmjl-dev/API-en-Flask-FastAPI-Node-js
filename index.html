@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Comunicacion de Flask/FastAPI con Node.JS</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="topline">
+      <div class="person">
+        <b>Victor Jerez</b>
+        Cédula: V28001871
+      </div>
+      <div class="date">14 de Noviembre de 2025</div>
+    </header>
+    <div class="title-wrap">
+      <h1 class="title">Comunicacion de Flask/FastAPI con Node.JS</h1>
+    </div>
+    <div class="main">
+      <nav class="toc">
+        <h2>Índice</h2>
+        <ul id="toc-list"></ul>
+      </nav>
+      <article class="content">
+        <section id="arquitectura" class="block">
+          <h3>Arquitectura recomendada y patrones de integración</h3>
+          <p>La comunicación ideal entre un entorno Python (con scikit-learn) y Node.js se logra mediante APIs bien definidas. El servicio Python actúa como servidor de inferencia, exponiendo endpoints REST o gRPC. Node.js funciona como cliente o gateway, enviando datos y recibiendo resultados.</p>
+          <p>Patrones comunes incluyen:</p>
+          <ul>
+            <li><strong>Síncrono REST:</strong> Node.js envía peticiones HTTP y recibe respuestas inmediatas.</li>
+            <li><strong>Asíncrono con colas:</strong> Node.js publica tareas en una cola (RabbitMQ/Kafka) y el servicio Python las procesa.</li>
+            <li><strong>Streaming:</strong> WebSockets o gRPC para comunicación persistente y baja latencia.</li>
+          </ul>
+        </section>
+
+        <section id="formatos" class="block">
+          <h3>Formatos de datos, contratos y validación</h3>
+          <p>El intercambio de datos debe ser claro y consistente. JSON es el formato más usado por su compatibilidad con Node.js y Python. Para grandes volúmenes se recomienda Protobuf o Avro.</p>
+          <p>Los contratos de API deben incluir:</p>
+          <ul>
+            <li><strong>Endpoint /predict:</strong> recibe un objeto con características y devuelve la predicción.</li>
+            <li><strong>Endpoint /health:</strong> confirma el estado del servicio.</li>
+            <li><strong>Endpoint /metadata:</strong> describe versión del modelo y esquema de entrada.</li>
+          </ul>
+          <p>FastAPI facilita la validación con <em>Pydantic</em>, garantizando que los datos cumplan el esquema esperado.</p>
+        </section>
+
+        <section id="modelo" class="block">
+          <h3>Carga del modelo y serialización</h3>
+          <p>El modelo debe cargarse en memoria al iniciar el servicio para evitar latencias adicionales. Se recomienda usar <code>joblib</code> para serializar y deserializar modelos scikit-learn.</p>
+          <p>Buenas prácticas:</p>
+          <ul>
+            <li>Empaquetar transformadores y preprocesadores junto al modelo en un <em>Pipeline</em>.</li>
+            <li>Versionar modelos para garantizar reproducibilidad.</li>
+            <li>Considerar ONNX para interoperabilidad y optimización.</li>
+          </ul>
+        </section>
+
+        <section id="seguridad" class="block">
+          <h3>Seguridad y fiabilidad</h3>
+          <p>Una comunicación ideal de APIs debe ser segura y confiable. Se recomienda:</p>
+          <ul>
+            <li>Usar HTTPS/TLS para cifrar el tráfico.</li>
+            <li>Autenticación mediante tokens JWT o API keys.</li>
+            <li>Configurar CORS para permitir solo orígenes confiables.</li>
+            <li>Implementar rate limiting para evitar abusos.</li>
+            <li>Registrar y monitorear peticiones con IDs únicos.</li>
+          </ul>
+        </section>
+
+        <section id="despliegue" class="block">
+          <h3>Despliegue, contenedores y CI/CD</h3>
+          <p>El despliegue ideal se realiza en contenedores Docker, orquestados con Kubernetes para escalabilidad y alta disponibilidad.</p>
+          <p>Buenas prácticas:</p>
+          <ul>
+            <li>Usar pipelines CI/CD para automatizar pruebas y despliegues.</li>
+            <li>Almacenar modelos en repositorios de artefactos (S3, MLflow).</li>
+            <li>Configurar variables de entorno para parámetros sensibles.</li>
+            <li>Implementar despliegues canary o blue/green para actualizar modelos sin interrumpir el servicio.</li>
+          </ul>
+        </section>
+
+        <section id="comunicacion-ideal" class="block">
+          <h3>Comunicación ideal de APIs</h3>
+          <p>Una comunicación ideal se caracteriza por:</p>
+          <ul>
+            <li><strong>Claridad:</strong> endpoints bien documentados y consistentes.</li>
+            <li><strong>Eficiencia:</strong> uso de formatos ligeros y compresión.</li>
+            <li><strong>Escalabilidad:</strong> capacidad de manejar múltiples clientes concurrentes.</li>
+            <li><strong>Resiliencia:</strong> manejo de errores y reconexiones automáticas.</li>
+            <li><strong>Seguridad:</strong> cifrado, autenticación y control de acceso.</li>
+          </ul>
+          <p>El diseño debe seguir principios RESTful o gRPC, con documentación automática (OpenAPI/Swagger) y pruebas de contrato para garantizar la interoperabilidad entre Flask/FastAPI y Node.js.</p>
+        </section>
+
+        <section id="ejemplos" class="block">
+          <h3>Ejemplos de código</h3>
+          <p>Ejemplo mínimo en FastAPI:</p>
+          <pre class="code">
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib, numpy as np
+
+class PredictRequest(BaseModel):
+    features: list
+
+app = FastAPI()
+model = joblib.load("model.joblib")
+
+@app.post("/predict")
+def predict(req: PredictRequest):
+    X = np.array(req.features).reshape(1,-1)
+    return {"prediction": int(model.predict(X)[0])}
+          </pre>
+          <p>Cliente Node.js:</p>
+          <pre class="code">
+async function predict(features){
+  const res = await fetch("http://localhost:8000/predict", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({features})
+  });
+  return await res.json();
+}
+          </pre>
+        </section>
+
+        <footer>UNEFA 2025. Inteligencia Artificial</footer>
+      </article>
+    </div>
+  </div>
+  <script src="./scripts.js"> </script>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+:root{
+      --bg:#f7f8fb;
+      --paper:#ffffff;
+      --ink:#222;
+      --muted:#555;
+      --accent:#0b5fff;
+      --border:#e6e9ee;
+      --maxw:960px;
+      --radius:8px;
+    }
+    body{
+      margin:0;
+      font-family:"Segoe UI",Arial,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+    }
+    .container{
+      max-width:var(--maxw);
+      margin:32px auto;
+      background:var(--paper);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:0 4px 16px rgba(0,0,0,0.06);
+      padding:28px 36px;
+    }
+    header.topline{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .person b{display:block;font-weight:600;}
+    .date{color:var(--muted);}
+    .title-wrap{text-align:center;margin:10px 0 22px;border-bottom:1px solid var(--border);padding-bottom:18px;}
+    h1.title{margin:0;font-size:1.3rem;color:var(--ink);}
+    .main{display:grid;grid-template-columns:260px 1fr;gap:28px;}
+    nav.toc{
+      position:sticky;top:28px;
+      align-self:start;
+      padding:18px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      background:#fafbff;
+    }
+    nav.toc h2{margin:0 0 10px;font-size:1rem;color:var(--accent);}
+    nav.toc ul{list-style:none;padding:0;margin:0;}
+    nav.toc li{margin:6px 0;}
+    nav.toc a{text-decoration:none;color:var(--ink);}
+    nav.toc a:hover{color:var(--accent);}
+    article.content{padding:18px 22px;}
+    section.block{margin-bottom:20px;}
+    section.block h3{margin:0 0 8px;font-size:1.06rem;color:var(--accent);}
+    section.block p{margin:0 0 10px;color:var(--muted);line-height:1.5;}
+    pre.code{background:#0b1220;color:#e6eef8;padding:12px;border-radius:6px;overflow:auto;font-size:0.9rem;}
+    footer{margin-top:22px;padding-top:12px;border-top:1px dashed var(--border);text-align:center;color:var(--muted);}
+    @media(max-width:880px){
+      .main{grid-template-columns:1fr;}
+      nav.toc{position:relative;top:auto;margin-bottom:12px;}
+      .container{margin:16px;padding:20px;}
+    }
